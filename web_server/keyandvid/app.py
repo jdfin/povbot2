@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, Response
 import threading
 import RPi.GPIO as GPIO
 import io
-import picamera
+import picamera2
 import logging
 from flask_cors import CORS
 from threading import Condition
@@ -67,17 +67,19 @@ def get_key():
             right()
     return '', 200
 
-@app.route('/')
+# I can't get '/' instead of '/home' to work :(
+@app.route('/home')
 def index():
     """Video streaming home page."""
     return render_template('index.html')
 
 def gen():
     """Video streaming generator function."""
-    with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
+    with picamera2.Picamera2() as camera:
         camera.rotation = 270  # Rotate the camera stream by 90 degrees counter-clockwise
+        camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
         output = StreamingOutput()
-        camera.start_recording(output, format='mjpeg')
+        camera.start_recording(picamera2.encoders.JpegEncoder(), picamera2.outputs.FileOutput(output))
         try:
             while True:
                 with output.condition:
@@ -94,22 +96,16 @@ def video_feed():
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-class StreamingOutput(object):
+class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
         self.frame = None
         self.buffer = io.BytesIO()
         self.condition = Condition()
 
     def write(self, buf):
-        if buf.startswith(b'\xff\xd8'):
-            # New frame, copy the existing buffer's content and notify all
-            # clients it's available
-            self.buffer.truncate()
-            with self.condition:
-                self.frame = self.buffer.getvalue()
-                self.condition.notify_all()
-            self.buffer.seek(0)
-        return self.buffer.write(buf)
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, threaded=True)

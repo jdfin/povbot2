@@ -12,11 +12,22 @@ Look in 3d_print folder to find a 3mf file with the chassis , camera holder and 
 
 ## Software
 
+### Preparation
+
+As of 23 July 2024, these are the software versions:
+- Hardware: Pi Zero 2, Pi Camera 3
+- Bookworm lite
+- python 3.12 (installed by default)
+- flask 2.2.2 (apt install python3-flask)
+- flask_cors 3.0.10 (apt install python3-flask-cors)
+- picamera2 0.3.19 (apt install python3-picamera2)
+
 Setting up video streaming and remote control is very easy.
 
 Clone this repo to a raspberry pi, navigate to web_server/keyandvid/
 
-From there run "python app.py" and the web server will start
+From there, edit static/script.js to contain your pi's IP address,
+then run "python app.py" and the web server will start.
 
 Then you can navigate to your pis ip address using a computer on the same wifi. Use port 8000.
 
