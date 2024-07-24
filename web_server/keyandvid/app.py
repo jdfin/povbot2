@@ -2,7 +2,10 @@ from flask import Flask, render_template, request, Response
 import threading
 import RPi.GPIO as GPIO
 import io
-import picamera2
+from picamera2 import Picamera2
+from picamera2.encoders import JpegEncoder
+from picamera2.outputs import FileOutput
+from libcamera import Transform
 import logging
 from flask_cors import CORS
 from threading import Condition
@@ -75,11 +78,11 @@ def index():
 
 def gen():
     """Video streaming generator function."""
-    with picamera2.Picamera2() as camera:
-        camera.rotation = 270  # Rotate the camera stream by 90 degrees counter-clockwise
-        camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+    with Picamera2() as camera:
+        camera.configure(camera.create_video_configuration(
+            main={"size": (640, 480)}, transform=Transform(vflip=1, hflip=1)))
         output = StreamingOutput()
-        camera.start_recording(picamera2.encoders.JpegEncoder(), picamera2.outputs.FileOutput(output))
+        camera.start_recording(JpegEncoder(), FileOutput(output))
         try:
             while True:
                 with output.condition:
