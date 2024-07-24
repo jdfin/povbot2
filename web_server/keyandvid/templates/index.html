@@ -4,17 +4,33 @@
 <head>
     <title>RoboTank</title>
     <style>
-    img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+        .column {
+            flex: 1;
+            padding: 0px;
+            /*background-color: #f2f2f2;*/
+        }
+        video {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
     <script src="/static/script.js"></script>
 </head>
 
 <body>
-    <img src="{{ url_for('video_feed') }}" width="1400" height="1050" class="center">
+    <div class="container">
+        <div class="column">
+            <img src="{{ url_for('video_feed') }}" width="1400" height="1050">
+            <br>
+            <span id="pressedKey"></span>
+        </div>
+    </div>
 </body>
 
 </html>

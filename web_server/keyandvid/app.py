@@ -13,46 +13,136 @@ app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(22, GPIO.OUT)
-GPIO.setup(23, GPIO.OUT)
-GPIO.setup(17, GPIO.OUT)
-GPIO.setup(27, GPIO.OUT)
 
+# right
 
-GPIO.output(22, GPIO.LOW)
-GPIO.output(23, GPIO.LOW)
-GPIO.output(17, GPIO.LOW)
-GPIO.output(27, GPIO.LOW)
+GPIO.setup(12, GPIO.OUT)
+pwm_r = GPIO.PWM(12, 1000)
+pwm_r.stop()
+
+speed_r = 50
+fwd_r = 50
+rev_r = 50
+
+GPIO.setup(6, GPIO.OUT)
+GPIO.output(6, GPIO.LOW)
+
+GPIO.setup(5, GPIO.OUT)
+GPIO.output(5, GPIO.LOW)
+
+# left
+
+GPIO.setup(13, GPIO.OUT)
+pwm_l = GPIO.PWM(13, 1000)
+pwm_l.stop()
+
+speed_l = 75
+fwd_l = 75
+rev_l = 75
+
+GPIO.setup(16, GPIO.OUT)
+GPIO.output(16, GPIO.LOW)
+
+GPIO.setup(19, GPIO.OUT)
+GPIO.output(19, GPIO.LOW)
 
 def forward():
-    GPIO.output(22, GPIO.LOW)  #left side
-    GPIO.output(23, GPIO.HIGH)
-    
-    GPIO.output(17, GPIO.HIGH) #right side
-    GPIO.output(27, GPIO.LOW)
-    
+    global speed_r
+    global speed_l
+    # right forward
+    GPIO.output(6, GPIO.LOW)
+    GPIO.output(5, GPIO.HIGH)
+    speed_r = fwd_r
+    pwm_r.start(speed_r)
+    # left forward
+    GPIO.output(16, GPIO.LOW)
+    GPIO.output(19, GPIO.HIGH)
+    speed_l = fwd_l
+    pwm_l.start(speed_l)
+
+def reverse():
+    global speed_r
+    global speed_l
+    # right reverse
+    GPIO.output(5, GPIO.LOW)
+    GPIO.output(6, GPIO.HIGH)
+    speed_r = rev_r
+    pwm_r.start(speed_r)
+    # left reverse
+    GPIO.output(19, GPIO.LOW)
+    GPIO.output(16, GPIO.HIGH)
+    speed_l = rev_l
+    pwm_l.start(speed_l)
+
 def stop():
-    GPIO.output(22, GPIO.LOW)  
-    GPIO.output(23, GPIO.LOW)
-    
-    GPIO.output(17, GPIO.LOW) 
-    GPIO.output(27, GPIO.LOW)
-    
+    global speed_r
+    global speed_l
+    # right stop
+    speed_r = 0
+    pwm_r.stop()
+    GPIO.output(6, GPIO.LOW)
+    GPIO.output(5, GPIO.LOW)
+    # left stop
+    speed_l = 0
+    pwm_l.stop()
+    GPIO.output(16, GPIO.LOW)
+    GPIO.output(19, GPIO.LOW)
+
 def right():
-    GPIO.output(22, GPIO.LOW)  
-    GPIO.output(23, GPIO.HIGH)
-    
-    GPIO.output(17, GPIO.LOW) 
-    GPIO.output(27, GPIO.HIGH)
-    
+    global speed_r
+    global speed_l
+    if speed_r == 0 and speed_l == 0:
+        # not moving - rotate
+        # right forward
+        pwm_r.stop()
+        GPIO.output(5, GPIO.LOW)
+        GPIO.output(6, GPIO.HIGH)
+        speed_r = fwd_r
+        pwm_r.start(speed_r)
+        # left reverse
+        pwm_l.stop()
+        GPIO.output(16, GPIO.LOW)
+        GPIO.output(19, GPIO.HIGH)
+        speed_l = rev_l
+        pwm_l.start(speed_l)
+    else:
+        # moving - curve right a little
+        speed_r -= 5
+        if (speed_r < 0):
+            speed_r = 0
+        pwm_r.start(speed_r)
+        speed_l += 5
+        if (speed_l > 100):
+            speed_l = 100
+        pwm_l.start(speed_l)
+
 def left():
-    GPIO.output(22, GPIO.HIGH)  
-    GPIO.output(23, GPIO.LOW)
-    
-    GPIO.output(17, GPIO.HIGH) 
-    GPIO.output(27, GPIO.LOW)
-
-
+    global speed_r
+    global speed_l
+    if speed_r == 0 and speed_l == 0:
+        # not moving - rotate
+        # right reverse
+        pwm_r.stop()
+        GPIO.output(6, GPIO.LOW)
+        GPIO.output(5, GPIO.HIGH)
+        speed_r = rev_r
+        pwm_r.start(speed_r)
+        # left forward
+        pwm_l.stop()
+        GPIO.output(19, GPIO.LOW)
+        GPIO.output(16, GPIO.HIGH)
+        speed_l = rev_l
+        pwm_l.start(speed_l)
+    else:
+        # moving - curve left a little
+        speed_r += 5
+        if (speed_r > 100):
+            speed_r = 100
+        pwm_r.start(speed_r)
+        speed_l -= 5
+        if (speed_l < 0):
+            speed_l = 0
+        pwm_l.start(speed_l)
 
 @app.route('/key', methods=['GET'])
 def get_key():
@@ -68,6 +158,8 @@ def get_key():
             stop()
         elif key == 'D':
             right()
+        elif key == 'X':
+            reverse()
     return '', 200
 
 # I can't get '/' instead of '/home' to work :(
