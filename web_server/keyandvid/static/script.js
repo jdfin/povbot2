@@ -11,6 +11,6 @@ window.onload = function() {
         pressedKeyElement.textContent = String.fromCharCode(keyCode);
 
         // Send the pressed key to the server
-        fetch(`http://192.168.50.38:8000/key?key=${String.fromCharCode(keyCode)}`);
+        fetch(`http://192.168.50.140:8000/key?key=${String.fromCharCode(keyCode)}`);
     });
 };

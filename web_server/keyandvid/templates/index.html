@@ -1,49 +1,20 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>povbot2</title>
+    <title>RoboTank</title>
     <style>
-        /* Style the container for the three columns */
-        .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-        }
-
-        /* Style the left and right columns */
-        .column {
-            flex: 1;
-            padding: 20px;
-            background-color: #f2f2f2;
-        }
-
-        /* Style the video element */
-        video {
-            max-width: 100%;
-            height: auto;
-        }
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="column">
-            <!-- Left column content goes here -->
-            <p>This is the text on the left side.</p>
-        </div>
-        <div class="column">
-            <!-- Video container -->
-            <center>
-                <h1>povbot2</h1>
-                <img src="{{ url_for('video_feed') }}" width="640" height="480">
-            </center>
-        </div>
-        <div class="column">
-            <!-- Right column content goes here -->
-            <p>This is the text on the right side.</p>
-        </div>
-    </div>
-    <span id="pressedKey"></span>
     <script src="/static/script.js"></script>
+</head>
+
+<body>
+    <img src="{{ url_for('video_feed') }}" width="1400" height="1050" class="center">
 </body>
+
 </html>
