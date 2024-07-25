@@ -26,12 +26,11 @@ Setting up video streaming and remote control is very easy.
 
 Clone this repo to a raspberry pi, navigate to web_server/keyandvid/
 
-From there, edit static/script.js to contain your pi's IP address,
-then run "python app.py" and the web server will start.
+From there, run "python app.py" and the web server will start.
 
 Then you can navigate to your pis ip address using a computer on the same wifi. Use port 8000.
 
-For example : 192.168.0.186:8000 and you should see your video stream. The robot can be steered using the WASD keys on your keyboard
+For example: 192.168.0.186:8000 and you should see your video stream. The robot can be steered using the WASDX keys on your keyboard:
 
 <img src="https://github.com/wattnotions/povbot2/assets/7674300/77e1b5a1-4066-4d3a-81a7-38c59279abc4" alt="Alt Text" width="450" height="400">
 
