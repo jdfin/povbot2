@@ -20,9 +20,9 @@ GPIO.setup(12, GPIO.OUT)
 pwm_r = GPIO.PWM(12, 1000)
 pwm_r.stop()
 
-speed_r = 50
-fwd_r = 50
-rev_r = 50
+speed_r = 90
+fwd_r = 90
+rev_r = 90
 
 GPIO.setup(6, GPIO.OUT)
 GPIO.output(6, GPIO.LOW)
@@ -36,9 +36,9 @@ GPIO.setup(13, GPIO.OUT)
 pwm_l = GPIO.PWM(13, 1000)
 pwm_l.stop()
 
-speed_l = 75
-fwd_l = 75
-rev_l = 75
+speed_l = 95
+fwd_l = 95
+rev_l = 95
 
 GPIO.setup(16, GPIO.OUT)
 GPIO.output(16, GPIO.LOW)
@@ -148,7 +148,6 @@ def left():
 def get_key():
     key = request.args.get('key')
     if key:
-        print(f'Key Pressed: {key}')
         # Check which key is pressed and set GPIO pins accordingly
         if key == 'W':
             forward()

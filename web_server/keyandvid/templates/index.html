@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
     <title>RoboTank</title>
+
     <style>
         .container {
             display: flex;
@@ -13,14 +15,29 @@
         .column {
             flex: 1;
             padding: 0px;
-            /*background-color: #f2f2f2;*/
         }
         video {
             max-width: 100%;
             height: auto;
         }
     </style>
-    <script src="/static/script.js"></script>
+
+    <script>
+        window.onload = function() {
+            // Get the HTML element where you want to display the pressed key
+            const pressedKeyElement = document.getElementById("pressedKey");
+            // Add an event listener to the document to capture keyboard input
+            document.addEventListener("keydown", function(event) {
+                // Get the key code of the pressed key
+                const keyCode = event.keyCode || event.which;
+                // Display the pressed key in the HTML element
+                pressedKeyElement.textContent = String.fromCharCode(keyCode);
+                // Send the pressed key to the server
+                fetch(`http://{{ request.host }}/key?key=${String.fromCharCode(keyCode)}`);
+            });
+        };
+    </script>
+
 </head>
 
 <body>
